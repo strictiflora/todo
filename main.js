@@ -10,7 +10,7 @@ const todoStorage = {
     todoStorage.uid = todos.length;
     return todos;
   },
-  save (todos) {
+  save(todos) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   }
 };
@@ -25,14 +25,14 @@ const app = {
     }
   },
   computed: {
-    changeButtonText () {
+    changeButtonText() {
       return this.editIndex === -1 ? '追加' : '編集';
     },
     isProcessing() {
       return (this.editIndex >= 0);
     }
   },
-  created () {
+  created() {
     this.todos = todoStorage.fetch();
   },
   methods: {
