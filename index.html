@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Vue.js App</title>
   <link rel="stylesheet" href="./style.css">
-  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://unpkg.com/vue@next"></script>
 </head>
 <body>
   <div id="app">
@@ -13,24 +13,35 @@
     <table>
       <tr
         v-for="item in todos"
-        v-bind:class="{done:item.state}">
+        :key="item.id"
+      >
         <th>{{ item.comment }}</th>
         <td class="button">
-          <button v-on:click="edit(item)">
+          <button @click="edit(item)">
             編集
           </button>
         </td>
         <td class="button">
-          <button v-bind:disabled="isProcessing()" v-on:click="remove(item)">
+          <button
+            @click="remove(item)"
+            :disabled="isProcessing"
+          >
             削除
           </button>
         </td>
       </tr>
     </table>
 
-    <form class="add-form" v-on:submit.prevent="setItems">
-      <input type="text" ref="comment"><br>
-      <button class="submit-button" type="submit">{{changeButtonText}}</button>
+    <form @submit.prevent="setItems">
+      <input
+        type="text"
+        ref="form"
+        v-model="comment"
+      ><br>
+      <button
+        class="submit-button"
+        type="submit"
+      >{{ changeButtonText }}</button>
     </form>
   </div>
 

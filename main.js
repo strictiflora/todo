@@ -1,6 +1,6 @@
 const STORAGE_KEY = 'todos';
 const todoStorage = {
-  fetch: function () {
+  fetch() {
     const todos = JSON.parse(
       localStorage.getItem(STORAGE_KEY) || '[]'
     );
@@ -10,82 +10,71 @@ const todoStorage = {
     todoStorage.uid = todos.length;
     return todos;
   },
-  save: function (todos) {
+  save (todos) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   }
 };
 
-new Vue({
+const app = {
   el: '#app',
-  data: {
-    editIndex: -1,
-    todos: [],
-    prosessing: false
-  },
-  computed: {
-    changeButtonText: function () {
-      return this.editIndex === -1 ? '追加' : '編集';
+  data() {
+    return {
+      todos: [],
+      editIndex: -1,
+      comment: null,
     }
   },
-  watch: {
-    todos: {
-      handler: function (todos) {
-        todoStorage.save(todos);
-      },
-      deep: true
+  computed: {
+    changeButtonText () {
+      return this.editIndex === -1 ? '追加' : '編集';
+    },
+    isProcessing() {
+      return (this.editIndex >= 0);
     }
   },
   created () {
     this.todos = todoStorage.fetch();
   },
   methods: {
-    startProcessing: function () {
-      this.processing = true;
-    },
-    endProcessing: function () {
-      this.processing = false;
-    },
-    isProcessing: function () {
-      return this.processing;
-    },
-    addNewComment: function (event, value) {
+    addNewComment() {
       this.todos.push({
         id: todoStorage.uid++,
-        comment: this.$refs.comment.value
+        comment: this.comment
       });
+      todoStorage.save(this.todos);
     },
-    addEditedComment: function (event, value) {
+    addEditedComment() {
       const editedComment = {
         id: this.editIndex,
-        comment: this.$refs.comment.value
+        comment: this.comment
       }
       this.todos.splice(this.editIndex, 1, editedComment);
+      todoStorage.save(this.todos);
     },
-    setItems: function () {
-      const comment = this.$refs.comment;
-      if (!comment.value.length) {
+    setItems() {
+      if (!this.comment.length) {
         return;
       }
       if (this.editIndex === -1) {
         this.addNewComment();
       } else {
         this.addEditedComment();
-        this.endProcessing();
       }
-      comment.value = '';
+      this.comment = '';
       this.editIndex = -1;
     },
-    remove: function (item) {
+    remove(item) {
       const index = this.todos.indexOf(item);
       this.todos.splice(index, 1);
+      todoStorage.save(this.todos);
     },
-    edit: function (item) {
+    edit(item) {
       this.editIndex = this.todos.indexOf(item);
       const text = this.todos[this.editIndex].comment;
-      const comment = this.$refs.comment;
-      comment.value = text;
-      comment.focus();
-      this.startProcessing();
+      this.comment = text;
+      this.$refs.form.focus();
     }
   }
-});
+};
+
+Vue.createApp(app).mount('#app');
