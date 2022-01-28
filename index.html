@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vue.js App</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://unpkg.com/vue@next"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>ToDo</h1>
+    <br>
+    <table>
+      <tr
+        v-for="item in todos"
+        :key="item.id"
+      >
+        <th>{{ item.comment }}</th>
+        <td class="button">
+          <button @click="edit(item)">
+            編集
+          </button>
+        </td>
+        <td class="button">
+          <button
+            @click="remove(item)"
+            :disabled="isProcessing"
+          >
+            削除
+          </button>
+        </td>
+      </tr>
+    </table>
+
+    <form @submit.prevent="setItems">
+      <input
+        type="text"
+        ref="form"
+        v-model="comment"
+      ><br>
+      <button
+        class="submit-button"
+        type="submit"
+      >{{ changeButtonText }}</button>
+    </form>
+  </div>
+
+  <script src="./main.js"></script>
+</body>
+</html>
